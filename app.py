@@ -208,7 +208,7 @@ st.subheader("Top Campaign")
 
 campaign_table = (
     filtered.groupby(
-        "Tên chiến dịch"
+        "campaign_name"
     )
     .agg(
         revenue=(
