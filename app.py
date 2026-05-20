@@ -8,7 +8,7 @@ from pathlib import Path
 # ==================================================
 
 files = list(
-    Path("parquet").glob("*.parquet")
+    Path("data").glob("*.parquet")
 )
 
 df = pd.concat(
