@@ -39,7 +39,7 @@ date_range = st.sidebar.date_input(
 
 campaign_filter = st.sidebar.multiselect(
     "Campaign",
-    sorted(df["campaign_name"].dropna().unique())
+    sorted(df["Tên chiến dịch"].dropna().unique())
 )
 
 channel_filter = st.sidebar.multiselect(
@@ -77,7 +77,7 @@ filtered = df.loc[mask].copy()
 
 if campaign_filter:
     filtered = filtered[
-        filtered["campaign_name"].isin(
+        filtered["Tên chiến dịch"].isin(
             campaign_filter
         )
     ]
@@ -208,7 +208,7 @@ st.subheader("Top Campaign")
 
 campaign_table = (
     filtered.groupby(
-        "campaign_name"
+        "Tên chiến dịch"
     )
     .agg(
         revenue=(
@@ -220,7 +220,7 @@ campaign_table = (
             "sum"
         ),
         clicks=(
-            "clicks",
+            "reach",
             "sum"
         )
     )
