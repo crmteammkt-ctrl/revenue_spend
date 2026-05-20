@@ -39,7 +39,7 @@ date_range = st.sidebar.date_input(
 
 campaign_filter = st.sidebar.multiselect(
     "Campaign",
-    sorted(df["Tên chiến dịch"].dropna().unique())
+    sorted(df["campaign_name"].dropna().unique())
 )
 
 channel_filter = st.sidebar.multiselect(
@@ -77,7 +77,7 @@ filtered = df.loc[mask].copy()
 
 if campaign_filter:
     filtered = filtered[
-        filtered["Tên chiến dịch"].isin(
+        filtered["campaign_name"].isin(
             campaign_filter
         )
     ]
