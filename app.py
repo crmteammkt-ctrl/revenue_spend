@@ -1,4 +1,4 @@
-import streamlit as st
+appimport streamlit as st
 import pandas as pd
 import plotly.express as px
 from pathlib import Path
