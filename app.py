@@ -1,4 +1,4 @@
-appimport streamlit as st
+import streamlit as st
 import pandas as pd
 import plotly.express as px
 from pathlib import Path
@@ -8,7 +8,7 @@ st.set_page_config(
     layout="wide"
 )
 
-DATA_DIR = Path("parquet_data")
+DATA_DIR = Path("data")
 
 @st.cache_data
 def read_parquet(name):
