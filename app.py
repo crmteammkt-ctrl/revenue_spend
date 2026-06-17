@@ -10,7 +10,7 @@ st.set_page_config(
     layout="wide"
 )
 
-DATA_DIR = Path("parquet_data")
+DATA_DIR = Path("data")
 
 @st.cache_data
 def load_data():
@@ -53,18 +53,38 @@ with f3:
         sorted(marketing_daily["kenh"].dropna().unique())
     )
 
-f4, f5 = st.columns(2)
+f4, f5, f6 = st.columns(3)
 
 with f4:
+    selected_hinh_thuc = st.multiselect(
+        "Hạng mục",
+        sorted(marketing_daily["hinh_thuc"].dropna().unique())
+    )
+
+with f5:
+    selected_campaigns = st.multiselect(
+        "Campaign",
+        sorted(marketing_daily["campaign"].dropna().unique())
+    )
+
+with f6:
     selected_regions = st.multiselect(
         "Region",
         sorted(sales_daily["region"].dropna().unique())
     )
 
-with f5:
+f7, f8 = st.columns(2)
+
+with f7:
     selected_provinces = st.multiselect(
         "Tỉnh/TP",
         sorted(sales_daily["tinh_tp"].dropna().unique())
+    )
+
+with f8:
+    selected_codes = st.multiselect(
+        "Code Marketing",
+        sorted(marketing_daily["code"].dropna().unique())
     )
 
 # ===== FILTER =====
@@ -93,6 +113,21 @@ if selected_provinces:
 
 if selected_channels:
     marketing_daily = marketing_daily[marketing_daily["kenh"].isin(selected_channels)]
+
+if selected_hinh_thuc:
+    marketing_daily = marketing_daily[
+        marketing_daily["hinh_thuc"].isin(selected_hinh_thuc)
+    ]
+
+if selected_campaigns:
+    marketing_daily = marketing_daily[
+        marketing_daily["campaign"].isin(selected_campaigns)
+    ]
+
+if selected_codes:
+    marketing_daily = marketing_daily[
+        marketing_daily["code"].isin(selected_codes)
+    ]
 
 # ===== TIME GROUP =====
 
@@ -168,22 +203,40 @@ c1, c2 = st.columns(2)
 with c1:
     fig = make_subplots(specs=[[{"secondary_y": True}]])
 
+    # Đường 1: Doanh thu
     fig.add_trace(
         go.Scatter(
             x=df["period"],
             y=df["revenue"],
             name="Doanh thu",
-            mode="lines+markers"
+            mode="lines+markers",
+            line=dict(
+                color="#1565C0",
+                width=2
+            ),
+            marker=dict(
+                color="#1565C0",
+                size=3
+            )
         ),
         secondary_y=False
     )
 
+    # Đường 2: Chi phí Marketing
     fig.add_trace(
-        go.Bar(
+        go.Scatter(
             x=df["period"],
             y=df["marketing_cost"],
             name="Chi phí Marketing",
-            opacity=0.35
+            mode="lines+markers",
+            line=dict(
+                color="#FF6B35",
+                width=3
+            ),
+            marker=dict(
+                color="#FF6B35",
+                size=3
+            )
         ),
         secondary_y=True
     )
@@ -191,22 +244,64 @@ with c1:
     fig.update_layout(
         title="Doanh thu vs Chi phí Marketing",
         hovermode="x unified",
-        height=500
+        height=500,
+        legend=dict(
+            orientation="h",
+            y=1.1,
+            x=0
+        ),
+        margin=dict(l=20, r=20, t=60, b=20)
     )
 
-    fig.update_yaxes(title_text="Doanh thu", secondary_y=False)
-    fig.update_yaxes(title_text="Chi phí Marketing", secondary_y=True)
+    fig.update_yaxes(
+        title_text="Doanh thu",
+        secondary_y=False,
+        tickformat=",.0f"
+    )
+
+    fig.update_yaxes(
+        title_text="Chi phí Marketing",
+        secondary_y=True,
+        tickformat=",.0f"
+    )
 
     st.plotly_chart(fig, use_container_width=True)
 
 with c2:
-    fig = px.line(
-        df,
-        x="period",
-        y="roas",
-        title="ROAS theo thời gian"
+
+    fig = go.Figure()
+
+    fig.add_trace(
+        go.Scatter(
+            x=df["period"],
+            y=df["roas"],
+            mode="lines+markers",
+            name="ROAS",
+            line=dict(
+                color="#2E7D32",
+                width=4
+            ),
+            marker=dict(
+                color="#2E7D32",
+                size=6
+            )
+        )
     )
-    st.plotly_chart(fig, use_container_width=True)
+
+    fig.update_layout(
+        title="ROAS theo thời gian",
+        height=500,
+        hovermode="x unified"
+    )
+
+    fig.update_yaxes(
+        title="ROAS (x)"
+    )
+
+    st.plotly_chart(
+        fig,
+        use_container_width=True
+    )
 
 # ===== MARKETING =====
 
